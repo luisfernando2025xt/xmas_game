@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>VIP Christmas Game</title>
+<style>
+  body {
+    background: #2e2e2e;
+    font-family: 'Arial', sans-serif;
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+  }
+  h1 {
+    color: #ff2e2e;
+    font-size: 3em;
+    margin-bottom: 10px;
+  }
+  p {
+    font-size: 1.2em;
+  }
+  .presents {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 30px;
+  }
+  .present {
+    background: #ffdd00;
+    width: 120px;
+    height: 120px;
+    margin: 15px;
+    border-radius: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2em;
+    transition: transform 0.2s;
+  }
+  .present:hover {
+    transform: rotate(-10deg) scale(1.1);
+  }
+  #message {
+    margin-top: 40px;
+    font-size: 1.5em;
+    min-height: 50px;
+    color: #00ff99;
+  }
+</style>
+</head>
+<body>
+<h1>🎅 VIP Christmas Surprise 🎁</h1>
+<p>Click a present and see what Santa says about you!</p>
+
+<div class="presents">
+  <div class="present" onclick="revealMessage(0)">🎁</div>
+  <div class="present" onclick="revealMessage(1)">🎁</div>
+  <div class="present" onclick="revealMessage(2)">🎁</div>
+  <div class="present" onclick="revealMessage(3)">🎁</div>
+</div>
+
+<div id="message"></div>
+
+<script>
+  const messages = [
+    "Santa says: You’ve been way too awesome this year! Expect a mountain of gifts! 🎉",
+    "Santa says: Naughty? Maybe a little… but VIP style! 😎",
+    "Santa says: You’ve been the best-kept secret in the North Pole! 🕵️‍♂️",
+    "Santa says: Warning! Too much holiday cheer may cause happiness overload! 🌟"
+  ];
+
+  function revealMessage(index) {
+    const msg = messages[index];
+    document.getElementById("message").innerText = msg;
+  }
+</script>
+</body>
+</html>
