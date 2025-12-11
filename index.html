@@ -2,34 +2,28 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>VIP Xmas Premium Game</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<title>VIP Xmas Game Fun</title>
 <style>
   body {
-    background: #1b1b1b;
+    background: #0b0b2f;
     font-family: 'Arial', sans-serif;
     color: #fff;
     text-align: center;
     padding: 30px;
   }
-  h1 {
-    color: #ffd700;
-    font-size: 3em;
-  }
-  p {
-    font-size: 1.2em;
-    margin-bottom: 30px;
-  }
+  h1 { color: #ffd700; font-size: 3em; margin-bottom: 10px; }
+  p { font-size: 1.2em; }
   .presents {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: 20px;
+    margin-top: 30px;
   }
   .present {
     background: linear-gradient(145deg, #ffd700, #ff9900);
-    width: 130px;
-    height: 130px;
+    width: 120px;
+    height: 120px;
     border-radius: 20px;
     cursor: pointer;
     display: flex;
@@ -43,67 +37,43 @@
     transform: rotate(-10deg) scale(1.15);
     box-shadow: 0 0 35px #ffff00;
   }
-  #message {
-    margin-top: 40px;
-    font-size: 1.4em;
-    min-height: 100px;
-    color: #00ff99;
-  }
-  #game-area {
-    margin-top: 50px;
-  }
-  #guessInput {
-    padding: 10px;
+  #message { margin-top: 30px; font-size: 1.3em; min-height: 60px; color: #00ff99; }
+  #game-area { margin-top: 50px; }
+  .game-btn {
+    margin: 10px;
+    padding: 10px 20px;
     font-size: 1em;
-    width: 60px;
-    text-align: center;
-  }
-  #guessBtn {
-    padding: 10px 15px;
-    font-size: 1em;
-    margin-left: 10px;
     cursor: pointer;
     background: #ffd700;
     border: none;
     border-radius: 5px;
   }
-  a.vip-link {
-    display: block;
-    margin-top: 15px;
-    font-size: 1.2em;
-    color: #ffd700;
-    text-decoration: underline;
-  }
 </style>
 </head>
 <body>
-<h1>🎄 VIP Xmas Premium Experience 🎁</h1>
-<p>Click a present to unlock exclusive VIP secrets, strategies, and high-value gifts!</p>
+<h1>🎄 VIP Xmas Fun Game 🎁</h1>
+<p>Click a present to play a mini-game and get exclusive VIP fun surprises!</p>
 
 <div class="presents" id="presents"></div>
-
 <div id="message"></div>
 <div id="game-area"></div>
 
 <script>
-  const { jsPDF } = window.jspdf;
-
   const presentsData = [
-    { type: "tip", content: "💎 Premium Wealth Tip: Write down your top 3 financial goals this year and create a 30-day micro-action plan." },
-    { type: "funny", content: "😂 Santa tried to wrap a unicorn… it didn’t fit. VIPs know: some things in life are priceless!" },
-    { type: "tip", content: "🌟 Valuable & Funny: Treat setbacks like Santa’s coal—annoying now, but lessons are gifts in disguise." },
-    { type: "pdf", content: "💼 VIP Secret: Exclusive 'Networking for Wealth' PDF." },
-    { type: "mini-game", content: "🎯 Mini-Game: Guess Santa's lucky number (1–5) to unlock a secret VIP strategy!" },
-    { type: "tip", content: "🧠 Brain Hack: Write 3 daily goals and review them every morning. VIPs create massive momentum." },
-    { type: "funny", content: "🤣 Elf tried to make a snowman… inside the fireplace. VIP laughter included!" },
-    { type: "pdf", content: "💰 Wealth Blueprint: Exclusive Think and Grow Rich exercises PDF." }
+    { type: "game1", content: "🎯 Mini-Game: Guess Santa's lucky number (1–5)!" },
+    { type: "game2", content: "🏆 Find the Golden Present!" },
+    { type: "game3", content: "❄️ Rapid Snowball Clicker Challenge!" },
+    { type: "fun", content: "😂 Silly Gift: Elf slipped on candy canes!" },
+    { type: "fun", content: "🌟 Valuable & Funny: Treat setbacks like Santa coal—lesson in disguise!" },
+    { type: "game1", content: "🎯 Mini-Game: Guess Santa's lucky number (1–5)!" },
+    { type: "fun", content: "🤣 Elf tried to make a snowman inside fireplace!" },
+    { type: "game3", content: "❄️ Rapid Snowball Clicker Challenge!" }
   ];
 
   const presentsContainer = document.getElementById("presents");
   const messageDiv = document.getElementById("message");
   const gameArea = document.getElementById("game-area");
 
-  // Generate presents
   presentsData.forEach((present, i) => {
     const div = document.createElement("div");
     div.classList.add("present");
@@ -112,62 +82,71 @@
     presentsContainer.appendChild(div);
   });
 
-  function generatePDF(title, content, filename){
-    const doc = new jsPDF();
-    doc.setFontSize(20);
-    doc.text(title, 20, 30);
-    doc.setFontSize(14);
-    doc.text(content, 20, 50);
-    doc.save(filename);
-  }
-
   function revealPresent(index){
     const present = presentsData[index];
     messageDiv.innerText = present.content;
     gameArea.innerHTML = "";
 
-    if(present.type === "pdf"){
-      const btn = document.createElement("button");
-      btn.innerText = "Download VIP PDF 💎";
-      btn.classList.add("vip-link");
-      btn.addEventListener("click", () => {
-        generatePDF(present.content, "This is your exclusive high-value VIP content. Implement it daily and watch your results.", `VIP_Present_${index+1}.pdf`);
-      });
-      gameArea.appendChild(btn);
-    }
-
-    if(present.type === "mini-game"){
-      startGuessGame();
-    }
+    if(present.type === "game1") startGuessGame();
+    if(present.type === "game2") startGoldenPresent();
+    if(present.type === "game3") startClickerGame();
   }
 
   function startGuessGame(){
     gameArea.innerHTML = `
-      <p>🎯 VIP Mini-Game: Guess Santa's lucky number (1–5)</p>
+      <p>Guess Santa's lucky number (1–5):</p>
       <input type="number" id="guessInput" min="1" max="5">
-      <button id="guessBtn">Guess!</button>
+      <button class="game-btn" id="guessBtn">Guess!</button>
       <div id="guessMessage"></div>
-      <button id="vipDownload" style="display:none;">💎 Download VIP Strategy PDF</button>
     `;
     const luckyNumber = Math.floor(Math.random()*5)+1;
-    const guessBtn = document.getElementById("guessBtn");
-    const guessMsg = document.getElementById("guessMessage");
-    const vipDownload = document.getElementById("vipDownload");
-
-    guessBtn.addEventListener("click", () => {
-      const userGuess = parseInt(document.getElementById("guessInput").value);
-      if(userGuess === luckyNumber){
-        guessMsg.innerText = "🎉 Incredible! You unlocked a VIP strategy!";
-        guessMsg.style.color = "#00ff99";
-        vipDownload.style.display = "inline-block";
+    document.getElementById("guessBtn").addEventListener("click", () => {
+      const guess = parseInt(document.getElementById("guessInput").value);
+      const msg = document.getElementById("guessMessage");
+      if(guess === luckyNumber){
+        msg.innerText = "🎉 Correct! VIP Insight: Visualize your top goal daily!";
+        msg.style.color = "#00ff99";
       } else {
-        guessMsg.innerText = `😅 Nope! Santa's lucky number was ${luckyNumber}. Try another present!`;
-        guessMsg.style.color = "#ff4444";
+        msg.innerText = `😅 Nope! Santa's lucky number was ${luckyNumber}.`;
+        msg.style.color = "#ff4444";
       }
     });
+  }
 
-    vipDownload.addEventListener("click", () => {
-      generatePDF("VIP Strategy", "This is your secret VIP strategy. Apply it and generate wealth!", "VIP_Strategy.pdf");
+  function startGoldenPresent(){
+    let attempts = 0;
+    gameArea.innerHTML = `<p>Find the golden present! Click 1-5:</p>`;
+    for(let i=1;i<=5;i++){
+      const btn = document.createElement("button");
+      btn.innerText = i;
+      btn.classList.add("game-btn");
+      btn.addEventListener("click", ()=>{
+        attempts++;
+        if(i===3){ // golden present
+          messageDiv.innerText = "🎉 You found the Golden Present! VIP Laugh & Tip: Keep dreaming BIG!";
+          gameArea.innerHTML="";
+        } else {
+          messageDiv.innerText = `😅 Not here! Attempts: ${attempts}`;
+        }
+      });
+      gameArea.appendChild(btn);
+    }
+  }
+
+  function startClickerGame(){
+    let count=0;
+    gameArea.innerHTML = `<p>Click the snowball as fast as you can! Goal: 10 clicks</p>
+      <button class="game-btn" id="clickBtn">❄️ Click me!</button>
+      <div id="clickMessage">Clicks: 0</div>`;
+    const btn = document.getElementById("clickBtn");
+    const msg = document.getElementById("clickMessage");
+    btn.addEventListener("click",()=>{
+      count++;
+      msg.innerText = `Clicks: ${count}`;
+      if(count>=10){
+        messageDiv.innerText = "🏆 Well done! VIP Reward: Santa approves your speed and strategy skills!";
+        gameArea.innerHTML="";
+      }
     });
   }
 </script>
