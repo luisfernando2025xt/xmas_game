@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>VIP Xmas: Put the Hat on Santa 🎅</title>
+<title>VIP Xmas Challenge: Santa XXL 🎅</title>
 <style>
   body {
     background: #0b0b2f;
@@ -11,31 +11,31 @@
     text-align: center;
     padding: 20px;
   }
-  h1 { color: #ffd700; font-size: 2em; }
+  h1 { color: #ffd700; font-size: 2.5em; }
   #game-area {
     margin-top: 30px;
     position: relative;
-    width: 300px;
-    height: 300px;
+    width: 500px;
+    height: 500px;
     margin-left: auto;
     margin-right: auto;
-    border: 2px solid #ffd700;
-    border-radius: 10px;
+    border: 3px solid #ffd700;
+    border-radius: 15px;
     background: #1a1a4d;
   }
   .santa {
     position: absolute;
-    top: 200px;
-    left: 130px;
-    font-size: 2em;
+    top: 150px;
+    left: 150px;
+    font-size: 5em;
   }
   .hat {
     position: absolute;
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     background: red;
     border-radius: 50%;
-    cursor: pointer;
+    cursor: grab;
     font-size: 1em;
     display: flex;
     align-items: center;
@@ -44,10 +44,10 @@
     user-select: none;
     transition: all 0.2s ease;
   }
-  #message { margin-top: 20px; min-height: 40px; font-size: 1.2em; color: #00ff99; }
+  #message { margin-top: 20px; min-height: 50px; font-size: 1.3em; color: #00ff99; }
   .game-btn {
     margin-top: 20px;
-    padding: 10px 20px;
+    padding: 10px 25px;
     font-size: 1em;
     cursor: pointer;
     background: #ffd700;
@@ -57,8 +57,8 @@
 </style>
 </head>
 <body>
-<h1>🎄 VIP Xmas Challenge: Put the Hat on Santa 🎅</h1>
-<p>Drag the hat onto Santa. Watch out! It moves if you miss 😆</p>
+<h1>🎄 VIP Xmas Challenge: Santa XXL 🎅</h1>
+<p>Drag the small hat onto the big Santa. Watch out! It jumps if you miss 😆</p>
 
 <div id="game-area">
   <div class="santa">🎅</div>
@@ -75,10 +75,10 @@ const resetBtn = document.getElementById("resetBtn");
 
 let dragging = false;
 
-// Random initial position for hat
+// Place hat randomly inside game area
 function randomHatPosition(){
   const maxX = gameArea.offsetWidth - hat.offsetWidth;
-  const maxY = gameArea.offsetHeight - hat.offsetHeight - 50; // leave space for Santa
+  const maxY = gameArea.offsetHeight - hat.offsetHeight;
   hat.style.left = Math.floor(Math.random() * maxX) + 'px';
   hat.style.top = Math.floor(Math.random() * maxY) + 'px';
 }
@@ -86,9 +86,9 @@ randomHatPosition();
 
 // Drag logic
 hat.addEventListener('mousedown', ()=>{ dragging = true; });
-document.addEventListener('mouseup', ()=>{ 
-  if(dragging){ 
-    dragging = false; 
+document.addEventListener('mouseup', ()=>{
+  if(dragging){
+    dragging = false;
     checkHat();
   }
 });
@@ -106,20 +106,26 @@ document.addEventListener('mousemove', (e)=>{
 
 // Check if hat is on Santa
 function checkHat(){
-  const santaX = 130;
-  const santaY = 200;
-  const santaSize = 40;
-
+  const santaX = 150;
+  const santaY = 150;
+  const santaSize = 150; // bigger Santa
   const hatX = parseInt(hat.style.left);
   const hatY = parseInt(hat.style.top);
 
-  if(hatX > santaX - 10 && hatX < santaX + santaSize && hatY > santaY - 10 && hatY < santaY + santaSize){
-    message.innerText = "🎉 Perfect! VIP Tip: Precision wins big deals!";
-    hat.style.left = santaX + 'px';
-    hat.style.top = (santaY - 30) + 'px';
+  if(hatX > santaX + 50 && hatX < santaX + santaSize - 50 &&
+     hatY > santaY - 20 && hatY < santaY + 30){
+    message.innerText = "🎉 Perfect! VIP Tip: Precision and patience lead to wealth!";
+    hat.style.left = santaX + 60 + 'px';
+    hat.style.top = santaY - 10 + 'px';
   } else {
-    message.innerText = "😆 Oops! Santa moved the hat! Try again!";
-    randomHatPosition();
+    const phrases = [
+      "😆 Oops! Santa dodged the hat!",
+      "😂 Missed! Santa laughs at your attempt!",
+      "😅 Try again! Santa is tricky today!",
+      "🤣 Santa's head moves! Focus VIP!"
+    ];
+    message.innerText = phrases[Math.floor(Math.random()*phrases.length)];
+    randomHatPosition(); // hat jumps to new spot
   }
 }
 
