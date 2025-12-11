@@ -11,18 +11,40 @@
     text-align: center;
     padding: 20px;
   }
-  h1 { color: #ffd700; font-size: 2.5em; }
-  #game-area { margin-top: 30px; position: relative; display: inline-block; }
-  #santa { width: 300px; height: auto; display: block; margin: 0 auto; }
-  #hat {
-    width: 80px;
-    height: auto;
+  h1 { color: #ffd700; font-size: 2em; }
+  #game-area {
+    margin-top: 30px;
+    position: relative;
+    width: 300px;
+    height: 300px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 2px solid #ffd700;
+    border-radius: 10px;
+    background: #1a1a4d;
+  }
+  .santa {
     position: absolute;
-    cursor: grab;
+    top: 200px;
+    left: 130px;
+    font-size: 2em;
+  }
+  .hat {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background: red;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
     user-select: none;
     transition: all 0.2s ease;
   }
-  #message { margin-top: 20px; min-height: 50px; font-size: 1.2em; color: #00ff99; }
+  #message { margin-top: 20px; min-height: 40px; font-size: 1.2em; color: #00ff99; }
   .game-btn {
     margin-top: 20px;
     padding: 10px 20px;
@@ -36,82 +58,68 @@
 </head>
 <body>
 <h1>🎄 VIP Xmas Challenge: Put the Hat on Santa 🎅</h1>
-<p>Drag the hat onto Santa's head. But beware! It moves each time you try 😆</p>
+<p>Drag the hat onto Santa. Watch out! It moves if you miss 😆</p>
 
 <div id="game-area">
-  <img id="santa" src="https://i.ibb.co/8bB6H6H/santa.png" alt="Santa">
-  <img id="hat" src="https://i.ibb.co/7WJ2Xbh/hat.png" alt="Hat">
+  <div class="santa">🎅</div>
+  <div class="hat" id="hat">🎩</div>
 </div>
-
 <div id="message"></div>
 <button class="game-btn" id="resetBtn">Restart Game</button>
 
 <script>
 const hat = document.getElementById("hat");
-const santa = document.getElementById("santa");
+const gameArea = document.getElementById("game-area");
 const message = document.getElementById("message");
 const resetBtn = document.getElementById("resetBtn");
-const gameArea = document.getElementById("game-area");
 
-let hatX = 50;
-let hatY = 200;
 let dragging = false;
 
-// Place hat at random position initially
+// Random initial position for hat
 function randomHatPosition(){
   const maxX = gameArea.offsetWidth - hat.offsetWidth;
-  const maxY = gameArea.offsetHeight - hat.offsetHeight;
-  hatX = Math.floor(Math.random() * maxX);
-  hatY = Math.floor(Math.random() * maxY);
-  hat.style.left = hatX + 'px';
-  hat.style.top = hatY + 'px';
+  const maxY = gameArea.offsetHeight - hat.offsetHeight - 50; // leave space for Santa
+  hat.style.left = Math.floor(Math.random() * maxX) + 'px';
+  hat.style.top = Math.floor(Math.random() * maxY) + 'px';
 }
 randomHatPosition();
 
-// Drag & Drop
-hat.addEventListener('mousedown', (e)=>{
-  dragging = true;
+// Drag logic
+hat.addEventListener('mousedown', ()=>{ dragging = true; });
+document.addEventListener('mouseup', ()=>{ 
+  if(dragging){ 
+    dragging = false; 
+    checkHat();
+  }
 });
-
 document.addEventListener('mousemove', (e)=>{
   if(dragging){
     const rect = gameArea.getBoundingClientRect();
     let x = e.clientX - rect.left - hat.offsetWidth/2;
     let y = e.clientY - rect.top - hat.offsetHeight/2;
+    x = Math.max(0, Math.min(gameArea.offsetWidth - hat.offsetWidth, x));
+    y = Math.max(0, Math.min(gameArea.offsetHeight - hat.offsetHeight, y));
     hat.style.left = x + 'px';
     hat.style.top = y + 'px';
   }
 });
 
-document.addEventListener('mouseup', ()=>{
-  if(dragging){
-    dragging = false;
-    checkHat();
-  }
-});
-
+// Check if hat is on Santa
 function checkHat(){
-  const santaRect = santa.getBoundingClientRect();
-  const hatRect = hat.getBoundingClientRect();
-  
-  // Convert to gameArea coordinates
-  const offsetX = gameArea.getBoundingClientRect().left;
-  const offsetY = gameArea.getBoundingClientRect().top;
-  const hatLeft = hatRect.left - offsetX;
-  const hatTop = hatRect.top - offsetY;
-  const santaLeft = 100; // Santa head approximate x
-  const santaTop = 40;   // Santa head approximate y
-  const santaWidth = 100;
-  const santaHeight = 60;
+  const santaX = 130;
+  const santaY = 200;
+  const santaSize = 40;
 
-  if(hatLeft > santaLeft && hatLeft < santaLeft + santaWidth &&
-     hatTop > santaTop && hatTop < santaTop + santaHeight){
-    message.innerText = "🎉 Perfect! You put the hat on Santa! VIP Tip: Big things take precision!";
-    hat.style.left = santaLeft + 20 + 'px';
-    hat.style.top = santaTop - 10 + 'px';
+  const hatX = parseInt(hat.style.left);
+  const hatY = parseInt(hat.style.top);
+
+  if(hatX > santaX - 10 && hatX < santaX + santaSize && hatY > santaY - 10 && hatY < santaY + santaSize){
+    message.innerText = "🎉 Perfect! VIP Tip: Precision wins big deals!";
+    hat.style.left = santaX + 'px';
+    hat.style.top = (santaY - 30) + 'px';
   } else {
     message.innerText = "😆 Oops! Santa moved the hat! Try again!";
-    randomHatPosition(); // Move hat to a new random place
+    randomHatPosition();
   }
 }
 
