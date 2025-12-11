@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>VIP Xmas Challenge: Santa XXL 🎅</title>
+<title>VIP Xmas Tree Challenge 🎄</title>
 <style>
   body {
     background: #0b0b2f;
@@ -13,38 +13,45 @@
   }
   h1 { color: #ffd700; font-size: 2.5em; }
   #game-area {
-    margin-top: 30px;
+    margin: 30px auto;
     position: relative;
-    width: 500px;
+    width: 400px;
     height: 500px;
-    margin-left: auto;
-    margin-right: auto;
     border: 3px solid #ffd700;
-    border-radius: 15px;
+    border-radius: 10px;
     background: #1a1a4d;
   }
-  .santa {
+  .tree {
     position: absolute;
-    top: 150px;
-    left: 150px;
-    font-size: 5em;
+    width: 0;
+    height: 0;
+    border-left: 200px solid transparent;
+    border-right: 200px solid transparent;
+    border-bottom: 350px solid green;
+    top: 50px;
+    left: 0;
   }
-  .hat {
-    position: absolute;
-    width: 50px;
-    height: 50px;
-    background: red;
+  .ball {
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
+    background: red;
+    position: absolute;
     cursor: grab;
-    font-size: 1em;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
     user-select: none;
+    font-size: 1em;
     transition: all 0.2s ease;
   }
-  #message { margin-top: 20px; min-height: 50px; font-size: 1.3em; color: #00ff99; }
+  #message {
+    margin-top: 20px;
+    min-height: 50px;
+    font-size: 1.2em;
+    color: #00ff99;
+  }
   .game-btn {
     margin-top: 20px;
     padding: 10px 25px;
@@ -57,82 +64,110 @@
 </style>
 </head>
 <body>
-<h1>🎄 VIP Xmas Challenge: Santa XXL 🎅</h1>
-<p>Drag the small hat onto the big Santa. Watch out! It jumps if you miss 😆</p>
+<h1>🎄 VIP Xmas Tree Challenge 🎁</h1>
+<p>Drag the balls onto the tree. Can you decorate it perfectly?</p>
 
 <div id="game-area">
-  <div class="santa">🎅</div>
-  <div class="hat" id="hat">🎩</div>
+  <div class="tree"></div>
 </div>
 <div id="message"></div>
 <button class="game-btn" id="resetBtn">Restart Game</button>
 
 <script>
-const hat = document.getElementById("hat");
 const gameArea = document.getElementById("game-area");
 const message = document.getElementById("message");
 const resetBtn = document.getElementById("resetBtn");
 
-let dragging = false;
+let balls = [];
+let targets = [
+  {x:180, y:100, placed:false},
+  {x:140, y:180, placed:false},
+  {x:220, y:180, placed:false},
+  {x:100, y:260, placed:false},
+  {x:260, y:260, placed:false}
+];
 
-// Place hat randomly inside game area
-function randomHatPosition(){
-  const maxX = gameArea.offsetWidth - hat.offsetWidth;
-  const maxY = gameArea.offsetHeight - hat.offsetHeight;
-  hat.style.left = Math.floor(Math.random() * maxX) + 'px';
-  hat.style.top = Math.floor(Math.random() * maxY) + 'px';
+function createBalls(){
+  const colors = ["red","blue","yellow","purple","orange"];
+  balls = [];
+  for(let i=0;i<5;i++){
+    const ball = document.createElement("div");
+    ball.classList.add("ball");
+    ball.style.background = colors[i];
+    ball.style.left = (50 + i*60) + "px";
+    ball.style.top = "400px";
+    ball.dataset.index = i;
+    gameArea.appendChild(ball);
+    balls.push(ball);
+    addDrag(ball);
+  }
 }
-randomHatPosition();
+createBalls();
 
-// Drag logic
-hat.addEventListener('mousedown', ()=>{ dragging = true; });
-document.addEventListener('mouseup', ()=>{
-  if(dragging){
-    dragging = false;
-    checkHat();
-  }
-});
-document.addEventListener('mousemove', (e)=>{
-  if(dragging){
-    const rect = gameArea.getBoundingClientRect();
-    let x = e.clientX - rect.left - hat.offsetWidth/2;
-    let y = e.clientY - rect.top - hat.offsetHeight/2;
-    x = Math.max(0, Math.min(gameArea.offsetWidth - hat.offsetWidth, x));
-    y = Math.max(0, Math.min(gameArea.offsetHeight - hat.offsetHeight, y));
-    hat.style.left = x + 'px';
-    hat.style.top = y + 'px';
-  }
-});
+function addDrag(ball){
+  let dragging = false;
+  let offsetX, offsetY;
+  
+  ball.addEventListener("mousedown", e=>{
+    dragging = true;
+    offsetX = e.offsetX;
+    offsetY = e.offsetY;
+  });
+  
+  document.addEventListener("mouseup", ()=>{
+    if(dragging){
+      dragging = false;
+      checkPlacement(ball);
+    }
+  });
+  
+  document.addEventListener("mousemove", e=>{
+    if(dragging){
+      const rect = gameArea.getBoundingClientRect();
+      let x = e.clientX - rect.left - offsetX;
+      let y = e.clientY - rect.top - offsetY;
+      x = Math.max(0, Math.min(gameArea.offsetWidth - ball.offsetWidth, x));
+      y = Math.max(0, Math.min(gameArea.offsetHeight - ball.offsetHeight, y));
+      ball.style.left = x + 'px';
+      ball.style.top = y + 'px';
+    }
+  });
+}
 
-// Check if hat is on Santa
-function checkHat(){
-  const santaX = 150;
-  const santaY = 150;
-  const santaSize = 150; // bigger Santa
-  const hatX = parseInt(hat.style.left);
-  const hatY = parseInt(hat.style.top);
-
-  if(hatX > santaX + 50 && hatX < santaX + santaSize - 50 &&
-     hatY > santaY - 20 && hatY < santaY + 30){
-    message.innerText = "🎉 Perfect! VIP Tip: Precision and patience lead to wealth!";
-    hat.style.left = santaX + 60 + 'px';
-    hat.style.top = santaY - 10 + 'px';
+function checkPlacement(ball){
+  const ballX = parseInt(ball.style.left) + 20; // center
+  const ballY = parseInt(ball.style.top) + 20;
+  const index = parseInt(ball.dataset.index);
+  
+  const target = targets[index];
+  const distance = Math.sqrt(Math.pow(ballX - target.x,2) + Math.pow(ballY - target.y,2));
+  
+  if(distance < 30){
+    ball.style.left = target.x - 20 + "px";
+    ball.style.top = target.y - 20 + "px";
+    target.placed = true;
+    message.innerText = "🎉 Perfect placement! VIP Tip: Patience and precision pay off!";
+    checkWin();
   } else {
-    const phrases = [
-      "😆 Oops! Santa dodged the hat!",
-      "😂 Missed! Santa laughs at your attempt!",
-      "😅 Try again! Santa is tricky today!",
-      "🤣 Santa's head moves! Focus VIP!"
-    ];
-    message.innerText = phrases[Math.floor(Math.random()*phrases.length)];
-    randomHatPosition(); // hat jumps to new spot
+    message.innerText = "😆 Ooops! The ball bounced away! Try again!";
+    ball.style.left = (50 + index*60) + "px";
+    ball.style.top = "400px";
   }
 }
 
-// Restart
+function checkWin(){
+  if(targets.every(t => t.placed)){
+    message.innerText = "🏆 Amazing! You decorated the VIP Xmas Tree perfectly! 🎄💎";
+  }
+}
+
 resetBtn.addEventListener("click", ()=>{
   message.innerText = "";
-  randomHatPosition();
+  targets.forEach(t=>t.placed=false);
+  balls.forEach((ball,i)=>{
+    ball.style.left = (50 + i*60) + "px";
+    ball.style.top = "400px";
+  });
 });
 </script>
 </body>
