@@ -2,45 +2,29 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>VIP Xmas Game Fun</title>
+<title>VIP Xmas: Put the Hat on Santa 🎅</title>
 <style>
   body {
     background: #0b0b2f;
     font-family: 'Arial', sans-serif;
     color: #fff;
     text-align: center;
-    padding: 30px;
+    padding: 20px;
   }
-  h1 { color: #ffd700; font-size: 3em; margin-bottom: 10px; }
-  p { font-size: 1.2em; }
-  .presents {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-    margin-top: 30px;
+  h1 { color: #ffd700; font-size: 2.5em; }
+  #game-area { margin-top: 30px; position: relative; display: inline-block; }
+  #santa { width: 300px; height: auto; display: block; margin: 0 auto; }
+  #hat {
+    width: 80px;
+    height: auto;
+    position: absolute;
+    cursor: grab;
+    user-select: none;
+    transition: all 0.2s ease;
   }
-  .present {
-    background: linear-gradient(145deg, #ffd700, #ff9900);
-    width: 120px;
-    height: 120px;
-    border-radius: 20px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2.5em;
-    transition: transform 0.3s, box-shadow 0.3s;
-    box-shadow: 0 0 20px #ffd700;
-  }
-  .present:hover {
-    transform: rotate(-10deg) scale(1.15);
-    box-shadow: 0 0 35px #ffff00;
-  }
-  #message { margin-top: 30px; font-size: 1.3em; min-height: 60px; color: #00ff99; }
-  #game-area { margin-top: 50px; }
+  #message { margin-top: 20px; min-height: 50px; font-size: 1.2em; color: #00ff99; }
   .game-btn {
-    margin: 10px;
+    margin-top: 20px;
     padding: 10px 20px;
     font-size: 1em;
     cursor: pointer;
@@ -51,104 +35,91 @@
 </style>
 </head>
 <body>
-<h1>🎄 VIP Xmas Fun Game 🎁</h1>
-<p>Click a present to play a mini-game and get exclusive VIP fun surprises!</p>
+<h1>🎄 VIP Xmas Challenge: Put the Hat on Santa 🎅</h1>
+<p>Drag the hat onto Santa's head. But beware! It moves each time you try 😆</p>
 
-<div class="presents" id="presents"></div>
+<div id="game-area">
+  <img id="santa" src="https://i.ibb.co/8bB6H6H/santa.png" alt="Santa">
+  <img id="hat" src="https://i.ibb.co/7WJ2Xbh/hat.png" alt="Hat">
+</div>
+
 <div id="message"></div>
-<div id="game-area"></div>
+<button class="game-btn" id="resetBtn">Restart Game</button>
 
 <script>
-  const presentsData = [
-    { type: "game1", content: "🎯 Mini-Game: Guess Santa's lucky number (1–5)!" },
-    { type: "game2", content: "🏆 Find the Golden Present!" },
-    { type: "game3", content: "❄️ Rapid Snowball Clicker Challenge!" },
-    { type: "fun", content: "😂 Silly Gift: Elf slipped on candy canes!" },
-    { type: "fun", content: "🌟 Valuable & Funny: Treat setbacks like Santa coal—lesson in disguise!" },
-    { type: "game1", content: "🎯 Mini-Game: Guess Santa's lucky number (1–5)!" },
-    { type: "fun", content: "🤣 Elf tried to make a snowman inside fireplace!" },
-    { type: "game3", content: "❄️ Rapid Snowball Clicker Challenge!" }
-  ];
+const hat = document.getElementById("hat");
+const santa = document.getElementById("santa");
+const message = document.getElementById("message");
+const resetBtn = document.getElementById("resetBtn");
+const gameArea = document.getElementById("game-area");
 
-  const presentsContainer = document.getElementById("presents");
-  const messageDiv = document.getElementById("message");
-  const gameArea = document.getElementById("game-area");
+let hatX = 50;
+let hatY = 200;
+let dragging = false;
 
-  presentsData.forEach((present, i) => {
-    const div = document.createElement("div");
-    div.classList.add("present");
-    div.innerText = "🎁";
-    div.addEventListener("click", () => revealPresent(i));
-    presentsContainer.appendChild(div);
-  });
+// Place hat at random position initially
+function randomHatPosition(){
+  const maxX = gameArea.offsetWidth - hat.offsetWidth;
+  const maxY = gameArea.offsetHeight - hat.offsetHeight;
+  hatX = Math.floor(Math.random() * maxX);
+  hatY = Math.floor(Math.random() * maxY);
+  hat.style.left = hatX + 'px';
+  hat.style.top = hatY + 'px';
+}
+randomHatPosition();
 
-  function revealPresent(index){
-    const present = presentsData[index];
-    messageDiv.innerText = present.content;
-    gameArea.innerHTML = "";
+// Drag & Drop
+hat.addEventListener('mousedown', (e)=>{
+  dragging = true;
+});
 
-    if(present.type === "game1") startGuessGame();
-    if(present.type === "game2") startGoldenPresent();
-    if(present.type === "game3") startClickerGame();
+document.addEventListener('mousemove', (e)=>{
+  if(dragging){
+    const rect = gameArea.getBoundingClientRect();
+    let x = e.clientX - rect.left - hat.offsetWidth/2;
+    let y = e.clientY - rect.top - hat.offsetHeight/2;
+    hat.style.left = x + 'px';
+    hat.style.top = y + 'px';
   }
+});
 
-  function startGuessGame(){
-    gameArea.innerHTML = `
-      <p>Guess Santa's lucky number (1–5):</p>
-      <input type="number" id="guessInput" min="1" max="5">
-      <button class="game-btn" id="guessBtn">Guess!</button>
-      <div id="guessMessage"></div>
-    `;
-    const luckyNumber = Math.floor(Math.random()*5)+1;
-    document.getElementById("guessBtn").addEventListener("click", () => {
-      const guess = parseInt(document.getElementById("guessInput").value);
-      const msg = document.getElementById("guessMessage");
-      if(guess === luckyNumber){
-        msg.innerText = "🎉 Correct! VIP Insight: Visualize your top goal daily!";
-        msg.style.color = "#00ff99";
-      } else {
-        msg.innerText = `😅 Nope! Santa's lucky number was ${luckyNumber}.`;
-        msg.style.color = "#ff4444";
-      }
-    });
+document.addEventListener('mouseup', ()=>{
+  if(dragging){
+    dragging = false;
+    checkHat();
   }
+});
 
-  function startGoldenPresent(){
-    let attempts = 0;
-    gameArea.innerHTML = `<p>Find the golden present! Click 1-5:</p>`;
-    for(let i=1;i<=5;i++){
-      const btn = document.createElement("button");
-      btn.innerText = i;
-      btn.classList.add("game-btn");
-      btn.addEventListener("click", ()=>{
-        attempts++;
-        if(i===3){ // golden present
-          messageDiv.innerText = "🎉 You found the Golden Present! VIP Laugh & Tip: Keep dreaming BIG!";
-          gameArea.innerHTML="";
-        } else {
-          messageDiv.innerText = `😅 Not here! Attempts: ${attempts}`;
-        }
-      });
-      gameArea.appendChild(btn);
-    }
-  }
+function checkHat(){
+  const santaRect = santa.getBoundingClientRect();
+  const hatRect = hat.getBoundingClientRect();
+  
+  // Convert to gameArea coordinates
+  const offsetX = gameArea.getBoundingClientRect().left;
+  const offsetY = gameArea.getBoundingClientRect().top;
+  const hatLeft = hatRect.left - offsetX;
+  const hatTop = hatRect.top - offsetY;
+  const santaLeft = 100; // Santa head approximate x
+  const santaTop = 40;   // Santa head approximate y
+  const santaWidth = 100;
+  const santaHeight = 60;
 
-  function startClickerGame(){
-    let count=0;
-    gameArea.innerHTML = `<p>Click the snowball as fast as you can! Goal: 10 clicks</p>
-      <button class="game-btn" id="clickBtn">❄️ Click me!</button>
-      <div id="clickMessage">Clicks: 0</div>`;
-    const btn = document.getElementById("clickBtn");
-    const msg = document.getElementById("clickMessage");
-    btn.addEventListener("click",()=>{
-      count++;
-      msg.innerText = `Clicks: ${count}`;
-      if(count>=10){
-        messageDiv.innerText = "🏆 Well done! VIP Reward: Santa approves your speed and strategy skills!";
-        gameArea.innerHTML="";
-      }
-    });
+  if(hatLeft > santaLeft && hatLeft < santaLeft + santaWidth &&
+     hatTop > santaTop && hatTop < santaTop + santaHeight){
+    message.innerText = "🎉 Perfect! You put the hat on Santa! VIP Tip: Big things take precision!";
+    hat.style.left = santaLeft + 20 + 'px';
+    hat.style.top = santaTop - 10 + 'px';
+  } else {
+    message.innerText = "😆 Oops! Santa moved the hat! Try again!";
+    randomHatPosition(); // Move hat to a new random place
   }
+}
+
+// Restart
+resetBtn.addEventListener("click", ()=>{
+  message.innerText = "";
+  randomHatPosition();
+});
 </script>
 </body>
 </html>
