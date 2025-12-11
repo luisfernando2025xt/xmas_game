@@ -71,7 +71,7 @@
 </head>
 <body>
 <h1>🎄 VIP Xmas Surprise 🎁</h1>
-<p>Click a present to uncover a secret Santa surprise: some are life-changing, some are funny, all are VIP-worthy!</p>
+<p>Click a present to uncover your exclusive VIP Santa gift!</p>
 
 <div class="presents" id="presents"></div>
 
@@ -80,14 +80,15 @@
 <div id="game-area"></div>
 
 <script>
+  // Fixed surprises for each present (always the same)
   const surprises = [
     "💎 Premium Insight: Write down exactly what you want in life. Every morning, visualize it vividly. Napoleon Hill would be proud!",
-    "😂 Silly Gift: Santa tried to wrap a unicorn this year… it didn’t fit. He says, 'LOL, maybe next year!'",
-    "🌟 Valuable & Funny: Want wealth? Treat every setback like a slap from Santa—annoying now, but a push to greatness later!",
-    "💼 VIP Secret: Your network is your net worth. Text 3 influential people today and offer real value. Santa approved.",
-    "🎁 Mini-game hint: Click on the golden present if you can find it! Hidden rewards await.",
+    "😂 Silly Gift: Santa tried to wrap a unicorn this year… it didn’t fit. 'LOL, maybe next year!'",
+    "🌟 Valuable & Funny: Treat setbacks like a Santa slap—annoying now, but pushing you to greatness later!",
+    "💼 VIP Secret: Your network is your net worth. Text 3 influential people today and offer real value. Santa approved!",
+    "🎯 Mini-game: Guess Santa's lucky number (1–5) to unlock a special VIP tip!",
     "🧠 Brain Hack: Write down 3 daily goals. Achieve them before breakfast, and Santa grants a VIP mindset boost!",
-    "🤣 Silly: Elf tried to make a snowman… inside the fireplace. He says, 'Oops!'",
+    "🤣 Silly: Elf tried to make a snowman… inside the fireplace. 'Oops!'",
     "💰 Wealth Tip: Invest in yourself first. Courses, books, mentors—your ROI is guaranteed!"
   ];
 
@@ -95,23 +96,25 @@
   const messageDiv = document.getElementById("message");
   const gameArea = document.getElementById("game-area");
 
-  // Create 8 presents dynamically
-  for(let i=0; i<8; i++){
+  // Create presents
+  for(let i=0; i<surprises.length; i++){
     const present = document.createElement("div");
     present.classList.add("present");
     present.innerText = "🎁";
+    present.dataset.index = i;
     present.addEventListener("click", () => revealSurprise(i));
     presentsContainer.appendChild(present);
   }
 
   function revealSurprise(index){
-    // Random surprise from the array
-    const surprise = surprises[Math.floor(Math.random() * surprises.length)];
+    const surprise = surprises[index];
     messageDiv.innerText = surprise;
 
-    // Trigger mini-game if message contains golden present hint
-    if(surprise.includes("golden present")){
+    // Trigger mini-game if index 4 (fixed for present #5)
+    if(index === 4){
       startGuessGame();
+    } else {
+      gameArea.innerHTML = ""; // Clear game area if not mini-game
     }
   }
 
@@ -129,7 +132,7 @@
     guessBtn.addEventListener("click", () => {
       const userGuess = parseInt(document.getElementById("guessInput").value);
       if(userGuess === luckyNumber){
-        guessMsg.innerText = "🎉 Amazing! Santa says you get a secret VIP tip: Write down your goals and watch wealth flow!";
+        guessMsg.innerText = "🎉 Amazing! Santa's VIP tip: Write down your goals and watch wealth flow!";
         guessMsg.style.color = "#00ff99";
       } else {
         guessMsg.innerText = `😅 Nope! Santa's lucky number was ${luckyNumber}. But keep dreaming big!`;
