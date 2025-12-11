@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>VIP Xmas Premium Game</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
   body {
     background: #1b1b1b;
@@ -82,45 +83,20 @@
 <div class="presents" id="presents"></div>
 
 <div id="message"></div>
-
 <div id="game-area"></div>
 
 <script>
+  const { jsPDF } = window.jspdf;
+
   const presentsData = [
-    { // Present 1
-      type: "tip",
-      content: "💎 Premium Wealth Tip: Write down your top 3 financial goals this year and create a 30-day micro-action plan. This is how millionaires start every day."
-    },
-    { // Present 2
-      type: "funny",
-      content: "😂 Santa tried to wrap a unicorn… it didn’t fit. VIPs know: some things in life are priceless and unwrappable!"
-    },
-    { // Present 3
-      type: "tip",
-      content: "🌟 Valuable & Funny: Treat setbacks like Santa’s coal—annoying now, but the gift is in the lesson. Reflect and double your action."
-    },
-    { // Present 4
-      type: "resource",
-      content: "💼 VIP Secret: Download your exclusive 'Networking for Wealth' PDF here:",
-      link: "https://example.com/networking-vip.pdf"
-    },
-    { // Present 5 mini-game
-      type: "mini-game",
-      content: "🎯 Mini-Game: Guess Santa's lucky number (1–5) to unlock a secret VIP strategy!"
-    },
-    { // Present 6
-      type: "tip",
-      content: "🧠 Brain Hack: Write 3 daily goals and review them every morning. VIPs create massive momentum."
-    },
-    { // Present 7
-      type: "funny",
-      content: "🤣 Elf tried to make a snowman… inside the fireplace. VIP laughter included for free!"
-    },
-    { // Present 8
-      type: "resource",
-      content: "💰 Wealth Blueprint: Unlock your exclusive Think and Grow Rich exercises PDF here:",
-      link: "https://example.com/tg-rich-exercises.pdf"
-    }
+    { type: "tip", content: "💎 Premium Wealth Tip: Write down your top 3 financial goals this year and create a 30-day micro-action plan." },
+    { type: "funny", content: "😂 Santa tried to wrap a unicorn… it didn’t fit. VIPs know: some things in life are priceless!" },
+    { type: "tip", content: "🌟 Valuable & Funny: Treat setbacks like Santa’s coal—annoying now, but lessons are gifts in disguise." },
+    { type: "pdf", content: "💼 VIP Secret: Exclusive 'Networking for Wealth' PDF." },
+    { type: "mini-game", content: "🎯 Mini-Game: Guess Santa's lucky number (1–5) to unlock a secret VIP strategy!" },
+    { type: "tip", content: "🧠 Brain Hack: Write 3 daily goals and review them every morning. VIPs create massive momentum." },
+    { type: "funny", content: "🤣 Elf tried to make a snowman… inside the fireplace. VIP laughter included!" },
+    { type: "pdf", content: "💰 Wealth Blueprint: Exclusive Think and Grow Rich exercises PDF." }
   ];
 
   const presentsContainer = document.getElementById("presents");
@@ -136,18 +112,28 @@
     presentsContainer.appendChild(div);
   });
 
+  function generatePDF(title, content, filename){
+    const doc = new jsPDF();
+    doc.setFontSize(20);
+    doc.text(title, 20, 30);
+    doc.setFontSize(14);
+    doc.text(content, 20, 50);
+    doc.save(filename);
+  }
+
   function revealPresent(index){
     const present = presentsData[index];
     messageDiv.innerText = present.content;
-    gameArea.innerHTML = ""; // Clear previous game area
+    gameArea.innerHTML = "";
 
-    if(present.type === "resource"){
-      const link = document.createElement("a");
-      link.href = present.link;
-      link.target = "_blank";
-      link.innerText = "Click here to unlock VIP PDF 💎";
-      link.classList.add("vip-link");
-      gameArea.appendChild(link);
+    if(present.type === "pdf"){
+      const btn = document.createElement("button");
+      btn.innerText = "Download VIP PDF 💎";
+      btn.classList.add("vip-link");
+      btn.addEventListener("click", () => {
+        generatePDF(present.content, "This is your exclusive high-value VIP content. Implement it daily and watch your results.", `VIP_Present_${index+1}.pdf`);
+      });
+      gameArea.appendChild(btn);
     }
 
     if(present.type === "mini-game"){
@@ -161,7 +147,7 @@
       <input type="number" id="guessInput" min="1" max="5">
       <button id="guessBtn">Guess!</button>
       <div id="guessMessage"></div>
-      <a href="https://example.com/vip-strategy.pdf" target="_blank" id="vipDownload" style="display:none;">💎 Download your VIP strategy!</a>
+      <button id="vipDownload" style="display:none;">💎 Download VIP Strategy PDF</button>
     `;
     const luckyNumber = Math.floor(Math.random()*5)+1;
     const guessBtn = document.getElementById("guessBtn");
@@ -173,11 +159,15 @@
       if(userGuess === luckyNumber){
         guessMsg.innerText = "🎉 Incredible! You unlocked a VIP strategy!";
         guessMsg.style.color = "#00ff99";
-        vipDownload.style.display = "block";
+        vipDownload.style.display = "inline-block";
       } else {
         guessMsg.innerText = `😅 Nope! Santa's lucky number was ${luckyNumber}. Try another present!`;
         guessMsg.style.color = "#ff4444";
       }
+    });
+
+    vipDownload.addEventListener("click", () => {
+      generatePDF("VIP Strategy", "This is your secret VIP strategy. Apply it and generate wealth!", "VIP_Strategy.pdf");
     });
   }
 </script>
